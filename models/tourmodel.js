@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const validator = require('validator');
 
 const tourschema = new mongoose.Schema(
   {
@@ -10,6 +11,7 @@ const tourschema = new mongoose.Schema(
       trim: true,
       maxlength: [40, 'a tour name must have less or equal to 40 characters'],
       minlength: [10, 'a tour name must have more or equal to 10 characters']
+      // validate: [validator.isAlpha, 'only charaters'] //this is used from validate.js from git hub but it is not useful bcoz it checks fot space also if there is any space it throws err
     },
     slug: String,
     duration: {
@@ -42,7 +44,16 @@ const tourschema = new mongoose.Schema(
       type: Number,
       required: [true, 'A tour must have a price']
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function(val) {
+          //THIS ONLY POINTS TO CURRENT DOC ON NEW DOCUMENT CREATION NOT ON UPDATE
+          return val < this.price; //to check if price is less than discount
+        },
+        message: 'discount price ({VALUE}) should be below the regular price'
+      }
+    },
     summary: {
       type: String,
       trim: true,
@@ -78,7 +89,7 @@ tourschema.virtual('durationWeeks').get(function() {
   return this.duration / 7;
 });
 
-//document middleware it runs before.save() and  .create()
+//document middleware it runs before.save() and  .create() NOT FOR UPDATE
 tourschema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
   next();
