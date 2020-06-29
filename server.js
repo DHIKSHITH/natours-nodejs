@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
 const dotenv = require('dotenv');
+//synchrous error handling
+
+process.on('uncaughtException', err => {
+  console.log('unhandled rejection shutting down......');
+  console.log(err.name, err.message);
+  process.exit(1);
+});
 
 dotenv.config({ path: './config.env' });
 
@@ -22,7 +29,17 @@ mongoose
 const app = require('./app');
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
+const server = app.listen(port, () => {
   // eslint-disable-next-line no-console
   console.log('app running');
 });
+
+process.on('unhandledRejection', err => {
+  console.log('unhandled rejection shutting down......');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
+});
+
+//console.log(x);//error synchronous
