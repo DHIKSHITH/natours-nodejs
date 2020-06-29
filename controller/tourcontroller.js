@@ -17,7 +17,7 @@ exports.aliasTopTours = (req, res, next) => {
 
 exports.getalltoursHandler = async (req, res) => {
   try {
-    console.log(req.query);
+    // console.log(req.query);
     //Build the query
     //1)filtering
     // const queryObj = { ...req.query };
