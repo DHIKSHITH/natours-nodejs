@@ -14,6 +14,9 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(express.json()); //middleware
 app.use(express.static(`${__dirname}/public`));
+app.use((req, res, next) => {
+  next();
+});
 
 // app.get('/',(req,res)=>{
 //     res.status(200).json({message:'hollo from server',app:'nators'});
