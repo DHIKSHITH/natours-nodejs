@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/usermodel');
 const catchAsync = require('../utils/catchasync');
 const AppError = require('../utils/appError');
+const sendEmail = require('../utils/email');
 
 const signToken = id => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -75,3 +76,53 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = currentUser;
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  //rest parameters means it used to pass array as an argument
+  //this is example for closure ie roles have access to below function
+  return (req, res, next) => {
+    //roles is an array['admin','leadguy'] and if role contains['user'] then
+    if (!roles.includes(req.user.role)) {
+      return next(new AppError('you does not have a permission', 403));
+    }
+    next();
+  };
+};
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  //1.get user based on POSTed email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError('no user with that email', 404));
+  }
+  //2.generate the random token [create an instance method]
+  const resetToken = user.createPasswordResetToken();
+  await user.save({ validateBeforeSave: false }); //this ignores the required fields
+
+  //3.send the token to user email
+  const resetURL = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/user/resetPassword/${resetToken}`;
+  const message = `forgot a password? submit password and passwordconfirm to:${resetURL}.\nif u didnt forget the password please ignore this email`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'your password reset token is valid for 10 mins',
+      message
+    });
+    res.status(200).json({
+      status: 'success',
+      message: 'token sent to email'
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(
+      new AppError('there was an error sending an email try again later', 500)
+    );
+  }
+});
+
+exports.resetPassword = (req, res, next) => {};
