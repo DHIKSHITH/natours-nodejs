@@ -1,5 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controller/errorController');
@@ -8,11 +13,41 @@ const userrouter = require('./userroutes');
 
 const app = express();
 
+app.use(helmet());
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'too many request from this ip pls try agin in an our'
+});
+
+app.use('/api', limiter);
+
 app.use(express.json()); //middleware
+//data sanitization against nosql query injection
+app.use(mongoSanitize());
+
+//data sanitization against xss
+app.use(xss());
+
+//polution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price'
+    ]
+  })
+);
+
 app.use(express.static(`${__dirname}/public`));
 app.use((req, res, next) => {
   next();
