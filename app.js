@@ -10,6 +10,7 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controller/errorController');
 const tourrouter = require('./tourroutes');
 const userrouter = require('./userroutes');
+const reviewrouter = require('./reviewroutes');
 
 const app = express();
 
@@ -75,6 +76,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/tours', tourrouter);
 
 app.use('/api/v1/user', userrouter);
+app.use('/api/v1/review', reviewrouter);
 
 //404 not found for uncorrect url
 
