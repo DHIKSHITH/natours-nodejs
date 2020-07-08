@@ -1,23 +1,20 @@
-const review = require('../models/reviewmodel');
-const catchAsync = require('../utils/catchasync');
+// const catchAsync = require('../utils/catchasync');
+const factory = require('./handlerFactory');
+const Review = require('../models/reviewmodel');
 
-exports.createReview = catchAsync(async (req, res, next) => {
-  const newReview = await review.create(req.body);
-  res.status(200).json({
-    status: 'pass',
-    data: {
-      review: newReview
-    }
-  });
-});
+exports.setTourUserIds = (req, res, next) => {
+  //nested routes
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+  next();
+};
 
-exports.getallReview = catchAsync(async (req, res, next) => {
-  const allreview = await review.find();
-  res.status(200).json({
-    status: 'pass',
-    results: allreview.length,
-    data: {
-      allreview
-    }
-  });
-});
+exports.createReview = factory.createOne(Review);
+
+exports.getallReview = factory.getAll(Review);
+
+exports.deleteReview = factory.deleteOne(Review);
+
+exports.updateReview = factory.updateOne(Review);
+
+exports.getReview = factory.getOne(Review);

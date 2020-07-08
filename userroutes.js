@@ -12,14 +12,16 @@ userrouter.route('/login').post(authcontroller.login);
 userrouter.route('/forgotPassword').post(authcontroller.forgotPassword);
 userrouter.route('/resetPassword/:token').patch(authcontroller.resetPassword);
 
-userrouter.patch(
-  '/updateMyPassword',
-  authcontroller.protect,
-  authcontroller.updatePassword
-);
+//protect all routes below this middleware
+userrouter.use(authcontroller.protect);
 
-userrouter.patch('/updateMe', authcontroller.protect, usercontroller.updateme);
-userrouter.delete('/deleteMe', authcontroller.protect, usercontroller.deleteme);
+userrouter.patch('/updateMyPassword', authcontroller.updatePassword);
+userrouter.get('/me', usercontroller.getme, usercontroller.getuser);
+userrouter.patch('/updateMe', usercontroller.updateme);
+userrouter.delete('/deleteMe', usercontroller.deleteme);
+
+//restrict and protected
+userrouter.use(authcontroller.restrictTo('admin'));
 
 userrouter
   .route('/')
