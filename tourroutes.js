@@ -30,6 +30,14 @@ tourrouter
   .get(tourcontroller.aliasTopTours, tourcontroller.getalltoursHandler);
 
 tourrouter
+  .route('/tours-within/:distance/center/:lating/unit/:unit')
+  .get(tourcontroller.getToursWithin);
+
+tourrouter
+  .route('/distance/:lating/unit/:unit')
+  .get(tourcontroller.getDistance);
+
+tourrouter
   .route('/')
   .get(tourcontroller.getalltoursHandler)
   .post(
