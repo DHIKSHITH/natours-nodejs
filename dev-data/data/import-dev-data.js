@@ -8,14 +8,14 @@ const Tour = require('../../models/tourmodel');
 const User = require('../../models/usermodel');
 const Review = require('../../models/reviewmodel');
 
-const DB = process.env.DATABASE.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
+// const DB = process.env.DATABASE.replace(
+//   '<PASSWORD>',
+//   process.env.DATABASE_PASSWORD
+// );
 
 mongoose
-  // .connect(process.env.DATABASE_LOCAL, {
-  .connect(DB, {
+  .connect(process.env.DATABASE_LOCAL, {
+    // .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false

@@ -18,7 +18,11 @@ userrouter.use(authcontroller.protect);
 
 userrouter.patch('/updateMyPassword', authcontroller.updatePassword);
 userrouter.get('/me', usercontroller.getme, usercontroller.getuser);
-userrouter.patch('/updateMe', usercontroller.updateme);
+userrouter.patch(
+  '/updateMe',
+  usercontroller.uploadUserPhoto,
+  usercontroller.updateme
+);
 userrouter.delete('/deleteMe', usercontroller.deleteme);
 
 //restrict and protected

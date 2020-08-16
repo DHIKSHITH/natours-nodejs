@@ -1,11 +1,17 @@
 // eslint-disable-next-line no-unused-vars
 const express = require('express');
+const multer = require('multer');
+
 // eslint-disable-next-line no-unused-vars
 const fs = require('fs');
 const catchAsync = require('../utils/catchasync');
 const AppError = require('../utils/appError');
 const User = require('../models/usermodel');
 const factory = require('./handlerFactory');
+
+const upload = multer({ dest: 'public/img/users' });
+
+exports.uploadUserPhoto = upload.single('photo');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -21,6 +27,8 @@ exports.getme = (req, res, next) => {
 };
 
 exports.updateme = catchAsync(async (req, res, next) => {
+  console.log(req.file);
+  console.log(req.body);
   //create error if user posts password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(

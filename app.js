@@ -13,12 +13,8 @@ const globalErrorHandler = require('./controller/errorController');
 const tourrouter = require('./tourroutes');
 const userrouter = require('./userroutes');
 const reviewrouter = require('./reviewroutes');
-const viewrouter = require('./viewroutes');
 
 const app = express();
-
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
 
 // app.use(express.static(`${__dirname}/public`));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -84,7 +80,6 @@ app.use((req, res, next) => {
 
 // app.delete('/api/v1/tours/:id',deletetour);
 
-app.use('/', viewrouter);
 app.use('/api/v1/tours', tourrouter);
 
 app.use('/api/v1/user', userrouter);
