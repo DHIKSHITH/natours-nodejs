@@ -14,7 +14,8 @@ const Overview = ({ getTours, tours: { tours, loading } }) => {
     <Fragment>
       <main className="main">
         <div className="card-container">
-          {loading === false && tours.data.map(tour => <Tour tour={tour} />)}
+          {loading === false &&
+            tours.data.map(tour => <Tour tour={tour} key={tour._id} />)}
         </div>
       </main>
     </Fragment>

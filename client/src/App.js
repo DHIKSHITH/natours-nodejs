@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 import Tours from './components/tours/Tours';
 import Tour from './components/tour/Tour';
 
@@ -19,6 +20,7 @@ function App() {
           <Switch>
             <Route exact path="/tours/:id" component={Tour} />
           </Switch>
+          <Footer />
         </Fragment>
       </Router>
     </Provider>
