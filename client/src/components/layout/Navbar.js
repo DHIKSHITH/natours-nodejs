@@ -1,7 +1,9 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { logout } from '../../actions/auth';
 
-const Navbar = () => {
+const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
   return (
     <Fragment>
       <header className="header">
@@ -25,25 +27,40 @@ const Navbar = () => {
         <div className="header__logo">
           <img src="/img/logo-white.png" alt="Natours logo" />
         </div>
-        <nav className="nav nav--user">
-          <Link to="/booking" className="nav__el">
-            My bookings
-          </Link>
-          <Link to="/profile" className="nav__el">
-            <img
-              src="/img/users/default.jpg"
-              alt="User photo"
-              className="nav__user-img"
-            />
-            <span>Jonas</span>
-          </Link>
 
-          <button className="nav__el">Log in</button>
-          <button className="nav__el nav__el--cta">Sign up</button>
+        <nav className="nav nav--user">
+          {isAuthenticated ? (
+            <Fragment>
+              <Link to="/booking" className="nav__el">
+                My bookings
+              </Link>
+              <Link to="/profile" className="nav__el">
+                <img
+                  src={`/img/users/${user.photo}`}
+                  alt="User photo"
+                  className="nav__user-img"
+                />
+                <span>{user.name.trim().split(' ')[0]}</span>
+              </Link>
+              <Link to="/login" className="nav__el" onClick={logout}>
+                Log Out
+              </Link>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Link to="/login" className="nav__el">
+                Log in
+              </Link>
+              <button className="nav__el nav__el--cta">Sign up</button>
+            </Fragment>
+          )}
         </nav>
       </header>
     </Fragment>
   );
 };
+const mapStateToProps = state => ({
+  auth: state.auth
+});
 
-export default Navbar;
+export default connect(mapStateToProps, { logout })(Navbar);

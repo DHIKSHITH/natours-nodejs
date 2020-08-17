@@ -25,9 +25,7 @@ const createSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     status: 'success',
     token,
-    data: {
-      user
-    }
+    data: user
   });
 };
 
@@ -98,6 +96,16 @@ exports.protect = catchAsync(async (req, res, next) => {
   res.locals.user = currentUser;
   next();
 });
+
+exports.Reactprotect = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('server Error');
+  }
+};
 
 //only for rendered pages
 exports.isLoggedIn = async (req, res, next) => {

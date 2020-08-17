@@ -16,6 +16,7 @@ userrouter.route('/resetPassword/:token').patch(authcontroller.resetPassword);
 //protect all routes below this middleware
 userrouter.use(authcontroller.protect);
 
+userrouter.route('/protect').get(authcontroller.Reactprotect);
 userrouter.patch('/updateMyPassword', authcontroller.updatePassword);
 userrouter.get('/me', usercontroller.getme, usercontroller.getuser);
 userrouter.patch(
